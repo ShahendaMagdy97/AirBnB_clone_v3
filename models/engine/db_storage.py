@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Include the DBStorage class
+Contains the class DBStorage
 """
 import urllib.parse
 
@@ -22,12 +22,12 @@ classes = {"Amenity": Amenity, "City": City,
 
 
 class DBStorage:
-    """deal with the MySQL database"""
+    """interaacts with the MySQL database"""
     __engine = None
     __session = None
 
     def __init__(self):
-        """Instance intiation a DBStorage object"""
+        """Instantiate a DBStorage object"""
         HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
         HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
         HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
@@ -53,14 +53,14 @@ class DBStorage:
         return self.__session.query(cls).filter_by(id=id).first()
 
     def count(self, cls=None):
-        """calculate the number of objects in storage"""
+        """count the number of objects in storage"""
         if cls:
             return self.__session.query(cls).count()
         return sum(map(lambda c: self.__session.query(c).count(),
                        classes.values()))
 
     def all(self, cls=None):
-        """a query regarding the active database session"""
+        """query on the current database session"""
         new_dict = {}
         for clss in classes:
             if cls is None or cls is classes[clss] or cls is clss:
@@ -71,25 +71,25 @@ class DBStorage:
         return (new_dict)
 
     def new(self, obj):
-        """incorporate the item into the active database session"""
+        """add the object to the current database session"""
         self.__session.add(obj)
 
     def save(self):
-        """incorporate the item into the active database session"""
+        """commit all changes of the current database session"""
         self.__session.commit()
 
     def delete(self, obj=None):
-        """remove from the object in the current database session if none"""
+        """delete from the current database session obj if not None"""
         if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
-        """uses the database to refresh data"""
+        """reloads data from the database"""
         Base.metadata.create_all(self.__engine)
         sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sess_factory)
         self.__session = Session
 
     def close(self):
-        """Using the private session attribute's delete() method"""
+        """call remove() method on the private session attribute"""
         self.__session.remove()

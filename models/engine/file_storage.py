@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Include the class of FileStorage
+Contains the FileStorage class
 """
 
 import json
@@ -17,7 +17,7 @@ classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
 
 
 class FileStorage:
-    """serialises instances and then deserialises them back into instances in a JSON file."""
+    """serializes instances to a JSON file & deserializes back to instances"""
 
     # string - path to the JSON file
     __file_path = "file.json"
@@ -25,7 +25,7 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """provides the __objects dictionary"""
+        """returns the dictionary __objects"""
         if cls is not None:
             new_dict = {}
             for key, value in self.__objects.items():
@@ -35,7 +35,7 @@ class FileStorage:
         return self.__objects
 
     def count(self, cls=None):
-        """calculate the quantity of storage items."""
+        """count the number of objects in storage"""
         if not cls:
             return len(self.__objects)
         return len(list(filter(lambda o: isinstance(o, cls),
@@ -56,13 +56,13 @@ class FileStorage:
         return None
 
     def new(self, obj):
-        """inserts the object with key <obj class name>.id into __objects."""
+        """sets in __objects the obj with key <obj class name>.id"""
         if obj is not None:
             key = obj.__class__.__name__ + "." + obj.id
             self.__objects[key] = obj
 
     def save(self):
-        """converts __objects into a JSON file with the filename __file_path."""
+        """serializes __objects to the JSON file (path: __file_path)"""
         json_objects = {}
         for key in self.__objects:
             json_objects[key] = self.__objects[key].to_dict()
@@ -70,7 +70,7 @@ class FileStorage:
             json.dump(json_objects, f)
 
     def reload(self):
-        """the JSON file is deserialised to __objects."""
+        """deserializes the JSON file to __objects"""
         try:
             with open(self.__file_path, 'r') as f:
                 jo = json.load(f)
@@ -80,12 +80,12 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """If an object is inside __objects, delete it."""
+        """delete obj from __objects if it’s inside"""
         if obj is not None:
             key = obj.__class__.__name__ + '.' + obj.id
             if key in self.__objects:
                 del self.__objects[key]
 
     def close(self):
-        """use the reload() function to convert the JSON file to objects."""
+        """call reload() method for deserializing the JSON file to objects"""
         self.reload()
