@@ -1,28 +1,41 @@
 #!/usr/bin/python3
-"""
-starts a Flask web application
-"""
+"""Starts us a Flask web app.
 
-from flask import Flask, render_template
-from models import *
+The app listens on 0.0.0.0, port 5000.
+
+"""
 from models import storage
+from flask import Flask
+from flask import render_template
+from models.state import State
+
 app = Flask(__name__)
 
 
-@app.route('/states', strict_slashes=False)
-@app.route('/states/<state_id>', strict_slashes=False)
-def states(state_id=None):
-    """display the states and cities listed in alphabetical order"""
-    states = storage.all("State")
-    if state_id is not None:
-        state_id = 'State.' + state_id
-    return render_template('9-states.html', states=states, state_id=state_id)
+@app.route("/states", strict_slashes=False)
+def lis_states():
+    """Display is  an list of all States HTML page .
+
+    States are is  sorted by name.
+    """
+    states = storage.all(State)
+    return render_template("9-states.html", state=states)
+
+
+@app.route("/states/<id>", strict_slashes=False)
+def states_id(id):
+    """Displayis  an HTML page wi inf about <id>, if it exi."""
+    for state in storage.all(State).values():
+        if state.id == id:
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
-    """closes the storage on teardown"""
+def zerdown(exc):
+    """Remove is curr SQLAlchemy session."""
     storage.close()
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5000')
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
