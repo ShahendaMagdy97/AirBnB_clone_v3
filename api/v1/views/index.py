@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-handles status and stats routs
-"""
+"""this module handles status and stats routs"""
 from flask import jsonify
 from api.v1.views import app_views
 from models.amenity import Amenity
@@ -15,15 +13,13 @@ from models import storage
 
 @app_views.route('/status')
 def status():
-    """returns a JSON confirmation"""
+    """returns a JSON says the status of the API is OK"""
     return jsonify({"status": "OK"}), 200
 
 
 @app_views.route('/stats')
 def stats():
-    """
-    retrieveing number of each objects by type
-    """
+    """retrieves the number of each objects by type"""
     classes = {"amenities": Amenity, "cities": City, "places": Place,
                "reviews": Review, "states": State, "users": User}
     count_dict = {}

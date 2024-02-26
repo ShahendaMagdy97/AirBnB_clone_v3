@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-handling all RESTFul API actions to all Amenity objects
-"""
+"""handles all default RESTFul API actions for Amenity objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -11,18 +9,14 @@ from api.v1.views.base_actions import REST_actions
 
 @app_views.route('/amenities', methods=['GET'])
 def get_all_amenities():
-    """
-    obtain Amenity objects
-    """
+    """gets all Amenity objects"""
     amenities = REST_actions.get(Amenity)
     return jsonify(amenities)
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['GET'])
 def get_amenity(amenity_id):
-    """
-    obtain a Amenity object by its id
-    """
+    """gets a Amenity object by its id"""
     amenity = REST_actions.get_by_id(Amenity, amenity_id)
     if amenity.get('status code') == 404:
         abort(404)
@@ -31,9 +25,7 @@ def get_amenity(amenity_id):
 
 @app_views.route('/amenities/<amenity_id>', methods=['DELETE'])
 def delete_amenity(amenity_id):
-    """
-    Deleting a Amenity object using id
-    """
+    """deletes a Amenity object by its id"""
     delete_response = REST_actions.delete(Amenity, amenity_id)
     if delete_response.get('status code') == 404:
         abort(404)
@@ -42,7 +34,7 @@ def delete_amenity(amenity_id):
 
 @app_views.route('/amenities', methods=['POST'])
 def post_amenity():
-    """creating a Amenity"""
+    """creates a Amenity"""
     request_body = request.get_json()
     if not request_body:
         return jsonify({'error': 'Not a JSON'}), 400
@@ -55,9 +47,7 @@ def post_amenity():
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'])
 def put_amenity(amenity_id):
-    """
-    updating a Amenity object using id
-    """
+    """ updates a Amenity object by its id """
     request_body = request.get_json()
     if not request_body:
         abort(400, "Not a JSON")

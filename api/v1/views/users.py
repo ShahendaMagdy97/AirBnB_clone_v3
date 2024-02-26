@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-Handles all default RESTFul API actions for User objects
-"""
+"""handles all default RESTFul API actions for User objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -11,17 +9,13 @@ from api.v1.views.base_actions import REST_actions
 
 @app_views.route('/users', methods=['GET'])
 def get_users():
-    """
-    obtain all User objects
-    """
+    """gets all User objects"""
     return jsonify(REST_actions.get(User))
 
 
 @app_views.route('/users/<user_id>', methods=['GET'])
 def get_user(user_id):
-    """
-    obtain a User object by its id
-    """
+    """gets a User object by its id"""
     user = REST_actions.get_by_id(User, user_id)
     if user.get('status code') == 404:
         abort(404)
@@ -30,9 +24,7 @@ def get_user(user_id):
 
 @app_views.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    """
-    Deleting a User obj using id
-    """
+    """deletes a User object by its id"""
     delete_response = REST_actions.delete(User, user_id)
     if delete_response.get('status code') == 404:
         abort(404)
@@ -56,9 +48,7 @@ def post_user():
 
 @app_views.route('/users/<user_id>', methods=['PUT'])
 def put_user(user_id):
-    """
-    updates a User object using id
-    """
+    """ updates a User object by its id """
     request_body = request.get_json()
     if not request_body:
         abort(400, "Not a JSON")

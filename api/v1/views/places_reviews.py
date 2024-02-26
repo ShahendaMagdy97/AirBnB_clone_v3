@@ -1,5 +1,5 @@
 #!/usr/bin/python3"
-"""handles RESTFul API actions Reviews objects"""
+"""handles all default RESTFul API actions for Reviews objects"""
 
 from flask import jsonify, abort, request
 from api.v1.views import app_views
@@ -13,7 +13,7 @@ from api.v1.views.base_actions import REST_actions
 
 @app_views.route('/places/<place_id>/reviews', methods=['GET'])
 def get_all_reviews(place_id):
-    """obtain all Review objects"""
+    """gets all Review objects"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
@@ -24,7 +24,7 @@ def get_all_reviews(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['GET'])
 def get_review(review_id):
-    """obtain a Review object by its id"""
+    """gets a Review object by its id"""
     review = REST_actions.get_by_id(Review, review_id)
     if review.get('status code') == 404:
         abort(404)
@@ -33,7 +33,7 @@ def get_review(review_id):
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'])
 def delete_review(review_id):
-    """Deleting a Review object by its id"""
+    """deletes a Review object by its id"""
     delete_response = REST_actions.delete(Review, review_id)
     if delete_response.get('status code') == 404:
         abort(404)
@@ -42,9 +42,7 @@ def delete_review(review_id):
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'])
 def post_review(place_id):
-    """
-    creates a Review
-    """
+    """creates a Review"""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
@@ -66,7 +64,7 @@ def post_review(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'])
 def put_review(review_id):
-    """updates a Review object using id"""
+    """ updates a Review object by its id """
     request_body = request.get_json()
     if not request_body:
         return jsonify({'error': 'Not a JSON'}), 400

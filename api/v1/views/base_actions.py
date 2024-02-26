@@ -1,18 +1,16 @@
 #!/usr/bin/python3
-"""
-handling RESTFul API actions for State objects
-"""
+"""handles all default RESTFul API actions for State objects"""
 from models import storage
 
 
 class REST_actions():
     def get(cls):
-        """geting objects"""
+        """gets all objects"""
         return (list(map(lambda state: state.to_dict(),
                          storage.all(cls).values())))
 
     def get_by_id(cls, id):
-        """gets an object using id"""
+        """gets an object by its id"""
         selected_object = storage.get(cls, id)
         if selected_object:
             return {'status code': 200,
@@ -21,9 +19,7 @@ class REST_actions():
             return {'status code': 404}
 
     def delete(cls, id):
-        """
-        Deleting the object
-        """
+        """deletes an object"""
         obj_to_delete = storage.get(cls, id)
         if obj_to_delete:
 
@@ -34,13 +30,13 @@ class REST_actions():
             return {'status code': 404}
 
     def post(obj):
-        """Creating another object"""
+        """creates a new object"""
         storage.new(obj)
         storage.save()
         return {'status code': 201, 'object dict': obj.to_dict()}
 
     def put(cls, state_id, args_to_ignore, request_body):
-        """Updating an object"""
+        """updates an object"""
         all_objects = storage.all(cls)
         args = dict(
             filter(lambda a: a[0] not in args_to_ignore, request_body.items()))

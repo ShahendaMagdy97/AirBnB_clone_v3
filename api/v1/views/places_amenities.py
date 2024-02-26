@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-handles RESTFul API to Place objects
-"""
+"""handles all default RESTFul API actions for Place objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -13,9 +11,7 @@ from os import getenv
 
 @app_views.route("/places/<place_id>/amenities", methods=['GET'])
 def get_place_amenities(place_id):
-    """
-    obtain place amenities
-    """
+    """get place amenities"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
@@ -27,7 +23,7 @@ def get_place_amenities(place_id):
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  methods=['DELETE'])
 def delete_place_amenity(place_id, amenity_id):
-    """removing place amenity"""
+    """delete place amenity"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
@@ -54,9 +50,7 @@ def delete_place_amenity(place_id, amenity_id):
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>", methods=['POST'])
 def post_place_amenity(place_id, amenity_id):
-    """
-    announce place amenity
-    """
+    """post place amenity"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)

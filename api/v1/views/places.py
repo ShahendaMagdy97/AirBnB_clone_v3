@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Handling default RESTFul API actions for Place objects"""
+"""handles all default RESTFul API actions for Place objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -13,9 +13,7 @@ from os import getenv
 
 @app_views.route('/places/<place_id>', methods=['GET'])
 def get_place(place_id):
-    """
-    obtain a Place object by its id
-    """
+    """gets a Place object by its id"""
     place = REST_actions.get_by_id(Place, place_id)
     if place.get('status code') == 404:
         abort(404)
@@ -24,22 +22,18 @@ def get_place(place_id):
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
 def get_places(city_id):
-    """
-    obtain all Place objs
-    """
+    """gets all Place objects"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
-    # Craeting a list of dicts
+    # craete a list of dictionaries
     places = list(map(lambda place: place.to_dict(), city.places))
     return jsonify(places)
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'])
 def delete_place(place_id):
-    """
-    Deleting a Place object using id
-    """
+    """deletes a Place object by its id"""
     delete_response = REST_actions.delete(Place, place_id)
     if delete_response.get('status code') == 404:
         abort(404)
@@ -48,9 +42,7 @@ def delete_place(place_id):
 
 @app_views.route('/cities/<city_id>/places', methods=['POST'])
 def post_place(city_id):
-    """
-    Creating a Place
-    """
+    """creates a Place"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
@@ -72,9 +64,7 @@ def post_place(city_id):
 
 @app_views.route('/places/<place_id>', methods=['PUT'])
 def put_place(place_id):
-    """
-    updates a Place object using id
-    """
+    """ updates a Place object by its id """
     request_body = request.get_json()
     if not request_body:
         abort(400, "Not a JSON")
@@ -88,9 +78,7 @@ def put_place(place_id):
 
 @app_views.route('/places_search', methods=['POST'])
 def places_search():
-    """
-    Createing a Place
-    """
+    """creates a Place"""
 
     request_body = request.get_json()
     if request_body is None:
@@ -101,7 +89,7 @@ def places_search():
     body_cities = request_body.get('cities', [])
     body_amenities = request_body.get('amenities', [])
 
-    # if no states, cities or amenities or empty body
+    # if there are no states, cities or amenities or empty body
     if request_body == {} or (body_states == [] and
                               body_cities == [] and body_amenities == []):
         all_places = storage.all(Place)
@@ -112,20 +100,20 @@ def places_search():
     if body_states == [] and body_cities == []:
         places = list(map(lambda p: p, storage.all(Place).values()))
     else:
-        # obtain all cities ids for the states
+        # get all cities ids for the states
         for state_id in body_states:
             state = storage.get(State, state_id)
             if state:
                 for city in state.cities:
                     places.extend(city.places)
-        # obtain places from body cities
+        # get places from body cities
         for city_id in body_cities:
             # if city_id is not in cities_places
             city = storage.get(City, city_id)
             if city:
                 places.extend(city.places)
     places = list(set(places))
-    # Editing by amenities
+    # filter by amenities
     if body_amenities:
         places_with_amenities = []
         for place in places:
@@ -134,17 +122,17 @@ def places_search():
                 if all(list(map(lambda a: a in
                                 list(map(lambda c: c.id, place.amenities)),
                                 body_amenities))):
-                    # Deleting amenities from place dict
+                    # delete amenities from place dict
                     del place.amenities
                     places_with_amenities.append(place.to_dict())
             else:
                 if all(list(map(lambda a: a in place.amenities,
                                 body_amenities))):
-                    # Deleting amenities from place dict
+                    # delete amenities from place dict
                     del place.amenities
                     places_with_amenities.append(place.to_dict())
         return jsonify(places_with_amenities)
     else:
-        # obtain places
+        # return all places
         places_list = list(map(lambda p: p.to_dict(), places))
         return jsonify(places_list)

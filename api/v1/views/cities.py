@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""handling RESTFul API actions for City objects"""
+"""handles all default RESTFul API actions for City objects"""
 from flask import jsonify, abort, request
 from api.v1.views import app_views
 from models import storage
@@ -10,9 +10,7 @@ from api.v1.views.base_actions import REST_actions
 
 @app_views.route('/states/<state_id>/cities', methods=['GET'])
 def get_all_city(state_id):
-    """
-    obtain City objects
-    """
+    """gets all City objects"""
     state = storage.get(State, state_id)
     if not state:
         abort(404)
@@ -23,9 +21,7 @@ def get_all_city(state_id):
 
 @app_views.route('/cities/<city_id>', methods=['GET'])
 def get_city(city_id):
-    """
-    geting a City object using id
-    """
+    """gets a City object by its id"""
     city = REST_actions.get_by_id(City, city_id)
     if city.get('status code') == 404:
         abort(404)
@@ -34,7 +30,7 @@ def get_city(city_id):
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'])
 def delete_city(city_id):
-    """Deletes City object using id"""
+    """deletes a City object by its id"""
     delete_response = REST_actions.delete(City, city_id)
     if delete_response.get('status code') == 404:
         abort(404)
@@ -43,9 +39,7 @@ def delete_city(city_id):
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'])
 def post_city(state_id):
-    """
-    creating a City
-    """
+    """creates a City"""
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
@@ -62,9 +56,7 @@ def post_city(state_id):
 
 @app_views.route('/cities/<city_id>', methods=['PUT'])
 def put_city(city_id):
-    """
-    updates a City object by its id
-    """
+    """ updates a City object by its id """
     request_body = request.get_json()
     if not request_body:
         abort(400, "Not a JSON")
